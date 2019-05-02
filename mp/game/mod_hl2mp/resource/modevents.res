@@ -48,4 +48,45 @@
 		"player"	"byte"		// entindex of the player
 		"achievement"	"short"		// achievement ID
 	}
+
+	"gameinstructor_draw"
+	{
+	}
+
+	"gameinstructor_nodraw"
+	{
+	}
+
+	"instructor_server_hint_create"
+	{
+		"userid"					"short"
+		"hint_entindex"				"long"
+		"hint_name"					"string"
+		"hint_target"				"long"
+		"hint_timeout"				"short"
+		"hint_display_limit"		"short"
+		"hint_icon_onscreen"		"string"
+		"hint_icon_offscreen"		"string"
+		"hint_caption"				"string"
+		"hint_color"				"string"
+		"hint_icon_offset"			"float"
+		"hint_range"				"float"
+		"hint_flags"				"long"
+		"hint_binding"				"string"
+		"hint_allow_nodraw_target"	"bool"
+		"hint_nooffscreen"			"bool"
+		"hint_forcecaption"			"bool"
+		"hint_instance_type"		"long"
+		"hint_suppress_rest"		"bool"
+	}
+
+	"instructor_server_hint_stop"
+	{
+	}
+
+	"set_instructor_group_enabled"
+	{
+		"group"		"string"
+		"enabled"	"short"
+	}
 }
