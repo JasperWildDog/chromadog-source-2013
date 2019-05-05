@@ -90,6 +90,7 @@ BEGIN_DATADESC( CEnvProjectedTexture )
 	DEFINE_INPUTFUNC( FIELD_BOOLEAN, "EnableShadows", InputSetEnableShadows ),
 	// this is broken . . need to be able to set color and intensity like light_dynamic
 //	DEFINE_INPUTFUNC( FIELD_COLOR32, "LightColor", InputSetLightColor ),
+	DEFINE_AUTO_ARRAY(m_SpotlightTextureName, FIELD_CHARACTER),
 	DEFINE_INPUTFUNC( FIELD_FLOAT, "Ambient", InputSetAmbient ),
 	DEFINE_INPUTFUNC( FIELD_STRING, "SpotlightTexture", InputSetSpotlightTexture ),
 	DEFINE_THINKFUNC( InitialThink ),
@@ -155,15 +156,19 @@ void UTIL_ColorStringToLinearFloatColor( Vector &color, const char *pString )
 
 bool CEnvProjectedTexture::KeyValue( const char *szKeyName, const char *szValue )
 {
-	if ( FStrEq( szKeyName, "lightcolor" ) )
+	if (FStrEq(szKeyName, "lightcolor"))
 	{
 		Vector tmp;
-		UTIL_ColorStringToLinearFloatColor( tmp, szValue );
+		UTIL_ColorStringToLinearFloatColor(tmp, szValue);
 		m_LinearFloatLightColor = tmp;
+	}
+	else if (FStrEq(szKeyName, "texturename"))
+	{
+		Q_strcpy(m_SpotlightTextureName.GetForModify(), szValue);
 	}
 	else
 	{
-		return BaseClass::KeyValue( szKeyName, szValue );
+		return BaseClass::KeyValue(szKeyName, szValue);
 	}
 
 	return true;
@@ -237,9 +242,19 @@ void CEnvProjectedTexture::Activate( void )
 	BaseClass::Activate();
 }
 
-void CEnvProjectedTexture::InitialThink( void )
+void CEnvProjectedTexture::InitialThink(void)
 {
-	m_hTargetEntity = gEntList.FindEntityByName( NULL, m_target );
+	if (m_hTargetEntity == NULL && m_target != NULL_STRING)
+		m_hTargetEntity = gEntList.FindEntityByName(NULL, m_target);
+	if (m_hTargetEntity == NULL)
+		return;
+
+	Vector vecToTarget = (m_hTargetEntity->GetAbsOrigin() - GetAbsOrigin());
+	QAngle vecAngles;
+	VectorAngles(vecToTarget, vecAngles);
+	SetAbsAngles(vecAngles);
+
+	SetNextThink(gpGlobals->curtime + 0.1);
 }
 
 int CEnvProjectedTexture::UpdateTransmitState()
